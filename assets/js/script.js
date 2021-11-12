@@ -1,4 +1,4 @@
-//global variables
+//Global variables
 var currentDayEl = $('#currentDay');
 var containerEl = $('.container');
 var currentHour = moment().hour();
@@ -15,10 +15,11 @@ var workDayHours = [
     moment().hour(17).format('hA')
 ];
 
+//Date on header
 var currentDay = moment().format('dddd, MMMM Do');
 currentDayEl.text(currentDay);
 
-//add time blocks for each hour (3 columns in 9 rows: 9AM to 5PM) format for 9AM is hA
+//Add time blocks to page
 for (var i = 0; i < workDayHours.length; i++) {
 
     var timeBlockRow = $('<div>')
@@ -39,11 +40,56 @@ for (var i = 0; i < workDayHours.length; i++) {
         .text(' ')
         .attr({id: 'Hour-' + (i + 9)});
 
-        $(containerEl).append(timeBlockRow);
+    //Save button
+    var saveBtn = $('<button>')
+        .addClass('col-1 saveBtn')
+        .attr({
+            id: 'save-button-' + (i + 9),
+            type: 'button',
+        })
+        .on('click', function () {
+            var hour = $(this).siblings().first().text();
+            var task = $(this).siblings().last().text();
 
-        $(timeBlockRow).append(timeBlockHour);
+            saveTask(hour, task)
 
-        $(timeBlockRow).append(timeBlockEventSpace);
+        })
 
-        $(timeBlockEventSpace).append(userInput);
+    //Add save button icon
+    var saveIcon = $('<i>')
+        .addClass('fas fa-save');    
+
+    $(containerEl).append(timeBlockRow);
+    $(timeBlockRow).append(timeBlockHour);
+    $(timeBlockRow).append(timeBlockEventSpace);
+    $(timeBlockEventSpace).append(userInput);
+    $(timeBlockRow).append(saveBtn);
+    $(saveBtn).append(saveIcon);
 }
+//Edit text when clickng on hours
+$('.col-10').on('click', 'p', function () {
+
+    var text = $(this)
+        .text()
+        .trim()
+
+    var textInput = $('<textarea>')
+        .addClass('form-control')
+        .val(text);
+
+    $(this).replaceWith(textInput);
+
+    textInput.trigger('focus');
+});
+
+$('.col-10').on('blur', 'textarea', function () {
+    var text = $(this)
+        .val()
+        .trim();
+
+    var userTextP = $("<p>")
+        .addClass("description")
+        .text(text);
+
+    $(this).replaceWith(userTextP);
+});
