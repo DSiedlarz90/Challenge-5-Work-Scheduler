@@ -19,6 +19,39 @@ var workDayHours = [
 var currentDay = moment().format('dddd, MMMM Do');
 currentDayEl.text(currentDay);
 
+//Add colors to times on schedule
+function auditTimeBlock(timeBlockEventSpace) {
+    var currentTimeBlockHour = moment($(timeBlockHour).text().trim(), 'hA').hour();
+
+    $(timeBlockEventSpace).removeClass('past present future');
+    if (currentTimeBlockHour > currentHour) {
+        $(timeBlockEventSpace).addClass('future');
+    }
+    else if (currentTimeBlockHour === currentHour) {
+        $(timeBlockEventSpace).addClass('present');
+    }
+    else {
+        $(timeBlockEventSpace).addClass('past');
+    }
+};
+
+//Load from local storage
+function loadTask() {
+    for (var i = 0; i < workDayHours.length; i++) {
+        let task = localStorage.getItem(workDayHours[i])
+        if (task) {
+            $('#' + (i + 9)).siblings().first().children().text(task);
+        };
+    };
+};
+
+
+//Save to local storage
+function saveTask(hour, task) {
+    localStorage.setItem(hour, task);
+};
+
+
 //Add time blocks to page
 for (var i = 0; i < workDayHours.length; i++) {
 
@@ -54,6 +87,9 @@ for (var i = 0; i < workDayHours.length; i++) {
             saveTask(hour, task)
 
         })
+
+    //Check time
+    auditTimeBlock(timeBlockEventSpace);
 
     //Add save button icon
     var saveIcon = $('<i>')
@@ -93,3 +129,5 @@ $('.col-10').on('blur', 'textarea', function () {
 
     $(this).replaceWith(userTextP);
 });
+
+loadTask();
